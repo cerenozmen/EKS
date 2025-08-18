@@ -24,7 +24,6 @@ services:
       - app-network
 
 networks:
-  app-network:   # network tanımı burada olmalı
-
+  app-network:   
 volumes:
   postgres_data: {}

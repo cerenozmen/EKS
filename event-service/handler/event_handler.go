@@ -40,7 +40,10 @@ func (h *EventHandler) GetEvents(c *fiber.Ctx) error {
 		isActive = &val
 	}
 
-	events, err := h.Service.GetEvents(isActive)
+	page := c.QueryInt("page", 1)    // default 1
+	limit := c.QueryInt("limit", 10) // default 10
+
+	events, err := h.Service.GetEvents(isActive, page, limit)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Etkinlikler alınamadı"})
 	}

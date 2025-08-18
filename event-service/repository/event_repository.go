@@ -23,7 +23,7 @@ func (r *EventRepository) CreateEvent(e *model.Event) error {
 }
 
 
-func (r *EventRepository) GetEvents(isActive *bool) ([]model.Event, error) {
+func (r *EventRepository) GetEvents(isActive *bool, page, limit int) ([]model.Event, error) {
 	var events []model.Event
 	query := r.db
 
@@ -31,13 +31,15 @@ func (r *EventRepository) GetEvents(isActive *bool) ([]model.Event, error) {
 		query = query.Where("is_active = ?", *isActive)
 	}
 
-	
-	if err := query.Order("created_at ASC").Find(&events).Error; err != nil {
+	offset := (page - 1) * limit
+
+	if err := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&events).Error; err != nil {
 		return nil, err
 	}
 
 	return events, nil
 }
+
 
 
 func (r *EventRepository) GetEventByID(id int) (*model.Event, error) {

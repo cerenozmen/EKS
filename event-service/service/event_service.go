@@ -6,7 +6,7 @@ import (
 	"event-service/model"
 	"event-service/repository"
 	"fmt"
-	"strconv"
+	
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -33,35 +33,12 @@ func (s *EventService) CreateEvent(e model.Event) (model.Event, error) {
 	return e, nil
 }
 
-// Etkinlik listesini getir
-func (s *EventService) GetEvents(isActive *bool) ([]model.Event, error) {
-	ctx := context.Background()
-	cacheKey := "events"
-	if isActive != nil {
-		cacheKey += "_active_" + strconv.FormatBool(*isActive)
-	}
 
-	// 1. Redis'ten oku
-	cached, err := s.redisClient.Get(ctx, cacheKey).Result()
-	if err == nil {
-		var events []model.Event
-		if err := json.Unmarshal([]byte(cached), &events); err == nil {
-			return events, nil
-		}
-	}
-
-	// 2. DB'den oku
-	events, err := s.repo.GetEvents(isActive)
+func (s *EventService) GetEvents(isActive *bool, page, limit int) ([]model.Event, error) {
+	events, err := s.repo.GetEvents(isActive, page, limit)
 	if err != nil {
 		return nil, err
 	}
-
-	// 3. Redis'e kaydet (go routine)
-	go func() {
-		data, _ := json.Marshal(events)
-		s.redisClient.Set(ctx, cacheKey, data, 10*time.Minute)
-	}()
-
 	return events, nil
 }
 
