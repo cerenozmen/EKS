@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
     ports:
-      - "5433:5433"
+      - "5432:5432"
     networks:
       - app-network
     volumes:
@@ -19,11 +19,11 @@ services:
     container_name: my_redis_db
     restart: always
     ports:
-      - "6380:6380"
+      - "6379:6379"
     networks:
       - app-network
-
 networks:
-  app-network:   
+  app-network:
+    driver: bridge   
 volumes:
   postgres_data: {}
