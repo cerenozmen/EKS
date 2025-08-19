@@ -24,24 +24,24 @@ func NewBookingService(repo *repository.BookingRepository, eventServiceURL strin
 	}
 }
 
-func (s *BookingService) Register(userID, eventID int)(string, int, error) {
+func (s *BookingService) Register(userID, eventID int) (string, error) {
 
 	event, err := s.getEvent(eventID)
 	if err != nil {
-		return "",0 ,fmt.Errorf("etkinlik bilgisi alınamadı: %w", err)
+		return "", fmt.Errorf("etkinlik bilgisi alınamadı: %w", err)
 	}
 
 	if !event.IsActive {
-		return "",0 ,errors.New("bu etkinlik kayıt için aktif değil")
+		return "", errors.New("bu etkinlik kayıt için aktif değil")
 	}
 
 	bookedCount, err := s.Repo.CountByEventID(eventID)
 	if err != nil {
-		return "",0 ,fmt.Errorf("kayıt sayısı alınırken hata oluştu: %w", err)
+		return "", fmt.Errorf("kayıt sayısı alınırken hata oluştu: %w", err)
 	}
 
 	if bookedCount >= int64(event.Capacity) {
-		return "",0 ,errors.New("etkinliğin kontenjanı doldu")
+		return "", errors.New("etkinliğin kontenjanı doldu")
 	}
 
 	booking := &model.Booking{
@@ -50,11 +50,11 @@ func (s *BookingService) Register(userID, eventID int)(string, int, error) {
 		CreatedAt: time.Now(),
 	}
 	if err := s.Repo.Create(booking); err != nil {
-        return "", 0, err
-    }
+		return "", err
+	}
 
-    return event.Name, userID, nil
-	
+	return event.Name, nil
+
 }
 
 func (s *BookingService) getEvent(eventID int) (*model.Event, error) {
@@ -83,4 +83,17 @@ func (s *BookingService) getEvent(eventID int) (*model.Event, error) {
 	}
 
 	return &event, nil
+}
+func (s *BookingService) CancelByIDs(userID, eventID int) (string, error) {
+	deletedEventID, err := s.Repo.DeleteByUserAndEvent(userID, eventID)
+	if err != nil {
+		return "", err
+	}
+
+	event, err := s.getEvent(deletedEventID)
+	if err != nil {
+		return "", fmt.Errorf("etkinlik bilgisi alınamadı: %w", err)
+	}
+
+	return event.Name, nil
 }
