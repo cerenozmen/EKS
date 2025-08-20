@@ -2,7 +2,6 @@ package handler
 
 import (
 	"booking-service/service"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -36,18 +35,16 @@ func (h *BookingHandler) CreateBooking(c *fiber.Ctx) error {
 	})
 }
 func (h *BookingHandler) CancelBooking(c *fiber.Ctx) error {
-
-	userID, err := strconv.Atoi(c.Params("userID"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Geçersiz kullanıcı ID'si"})
+	var req struct {
+		UserID  int `json:"user_id"`
+		EventID int `json:"event_id"`
 	}
 
-	eventID, err := strconv.Atoi(c.Params("eventID"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Geçersiz etkinlik ID'si"})
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Geçersiz istek gövdesi"})
 	}
 
-	eventName, err := h.BookingService.CancelByIDs(userID, eventID)
+	eventName, err := h.BookingService.CancelByIDs(req.UserID, req.EventID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

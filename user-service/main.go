@@ -1,17 +1,20 @@
 package main
 
 import (
-	"booking-service/config"
-	"booking-service/handler"
+	"user-service/config"
+	"user-service/handler"
 
-	"booking-service/repository"
-	"booking-service/service"
+	"user-service/repository"
+	"user-service/service"
 	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"github.com/gin-gonic/gin"
+
 )
 
 func main() {
@@ -29,13 +32,15 @@ func main() {
 		panic("Veritabanı bağlantısı kurulamadı: " + err.Error())
 	}
 
-	bookingRepo := repository.NewBookingRepository(db)
-	bookingService := service.NewBookingService(bookingRepo, cfg.EventServiceURL)
-	bookingHandler := handler.NewBookingHandler(bookingService)
+	userRepo := repository.NewUserRepository(db)
+	userService := service.NewUserService(userRepo)
+	userHandler := handler.NewUserHandler(userService)
 
-	app.Post("/bookings", bookingHandler.CreateBooking)
-	app.Delete("/bookings", bookingHandler.CancelBooking)
-	fmt.Printf("Booking Service, Fiber ile %s portunda çalışıyor...\n", cfg.AppPort)
+	r := gin.Default()
+	r.POST("/register", userHandler.Register)
+
+	
+	fmt.Printf("User Service, Fiber ile %s portunda çalışıyor...\n", cfg.AppPort)
 	if err := app.Listen(":" + cfg.AppPort); err != nil {
 		panic(err)
 	}

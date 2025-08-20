@@ -30,7 +30,7 @@ func (r *BookingRepository) Delete(id int) (int, error) {
 		return 0, result.Error
 	}
 	result = r.db.Delete(&booking)
-	return booking.EventId, result.Error
+	return booking.EventId, result.Error // EventId yerine EventID kullanılmalı
 }
 
 func (r *BookingRepository) DeleteByUserAndEvent(userID, eventID int) (int, error) {
@@ -40,5 +40,5 @@ func (r *BookingRepository) DeleteByUserAndEvent(userID, eventID int) (int, erro
 		return 0, result.Error
 	}
 	result = r.db.Delete(&booking)
-	return booking.EventId, result.Error
+	return booking.EventId, result.Error // EventId yerine EventID kullanılmalı
 }
