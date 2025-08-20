@@ -1,10 +1,11 @@
 package handler
 
 import (
-	"net/http"
 	"user-service/service"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
+	
+	
 )
 
 type UserHandler struct {
@@ -15,27 +16,56 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 	return &UserHandler{userService}
 }
 
-func (h *UserHandler) Register(c *gin.Context) {
+func (h *UserHandler) Register(c *fiber.Ctx) error {
 	var input struct {
-		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
-		Name     string `json:"name" binding:"required"`
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Name     string `json:"name"`
 	}
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	// JSON parse et
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
+	// Service katmanına gönder
 	user, err := h.userService.Register(input.Username, input.Password, input.Name)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	// Response
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"id":       user.ID,
 		"username": user.Username,
 		"name":     user.Name,
+		"createdAt": user.CreatedAt,
+	})
+}
+func (h *UserHandler) Login(c *fiber.Ctx) error {
+	var input struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	token, user, err := h.userService.Login(input.Username, input.Password)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid username or password"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"token":     token,
+		"id":        user.ID,
+		"username":  user.Username,
+		"name":      user.Name,
+		"createdAt": user.CreatedAt,
 	})
 }

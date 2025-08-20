@@ -11,6 +11,8 @@ type Cfg struct {
 	AppPort          string `env:"APP_PORT" default:"4041"`
 	EventServiceURL string `env:"EVENT_SERVICE_URL"`
 	BookingServiceURL string `env:"BOOKING_SERVICE_URL"`
+	JWTSecret	 string `env:"JWT_SECRET"`
+	JWTExpires	 string `env:"JWT_EXPIRES"`
 	DatabaseHost     string `env:"DATABASE_HOST"`
 	DatabasePort     string `env:"DATABASE_PORT"`
 	DatabaseUser     string `env:"DATABASE_USER"`
