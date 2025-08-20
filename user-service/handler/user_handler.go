@@ -22,14 +22,13 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		Name     string `json:"name"`
 	}
 
-	// JSON parse et
+
 	if err := c.BodyParser(&input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	// Service katmanına gönder
 	user, err := h.userService.Register(input.Username, input.Password, input.Name)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -37,7 +36,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		})
 	}
 
-	// Response
+
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"id":        user.ID,
 		"username":  user.Username,
@@ -60,7 +59,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid username or password"})
 	}
 
-	// Sadece token dön
+	
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"token": token,
 	})
@@ -73,7 +72,6 @@ func (h *UserHandler) Me(c *fiber.Ctx) error {
 		})
 	}
 
-	// Token doğrulama
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(h.userService.GetJWTSecret()), nil
 	})
@@ -84,7 +82,7 @@ func (h *UserHandler) Me(c *fiber.Ctx) error {
 		})
 	}
 
-	// Claims'den kullanıcı bilgilerini al
+	
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
