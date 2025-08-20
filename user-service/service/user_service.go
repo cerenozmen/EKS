@@ -10,6 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+
 type UserService interface {
 	Register(username, password, name string) (*model.User, error)
 	Login(username, password string) (string, *model.User, error)

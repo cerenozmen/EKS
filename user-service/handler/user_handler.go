@@ -4,8 +4,6 @@ import (
 	"user-service/service"
 
 	"github.com/gofiber/fiber/v2"
-	
-	
 )
 
 type UserHandler struct {
@@ -40,9 +38,9 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 
 	// Response
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"id":       user.ID,
-		"username": user.Username,
-		"name":     user.Name,
+		"id":        user.ID,
+		"username":  user.Username,
+		"name":      user.Name,
 		"createdAt": user.CreatedAt,
 	})
 }
@@ -56,16 +54,14 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	token, user, err := h.userService.Login(input.Username, input.Password)
+	token, _, err := h.userService.Login(input.Username, input.Password)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid username or password"})
 	}
 
+	// Sadece token dön
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"token":     token,
-		"id":        user.ID,
-		"username":  user.Username,
-		"name":      user.Name,
-		"createdAt": user.CreatedAt,
+		"token": token,
 	})
 }
+
