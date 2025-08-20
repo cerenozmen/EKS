@@ -35,6 +35,7 @@ func main() {
 
 	app.Post("/register", userHandler.Register)
 	app.Post("/login", userHandler.Login)
+	app.Get("/me", userHandler.Me)
 
 	
 	fmt.Printf("User Service, Fiber ile %s portunda çalışıyor...\n", cfg.AppPort)

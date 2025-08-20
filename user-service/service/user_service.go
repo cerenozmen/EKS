@@ -10,10 +10,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
 type UserService interface {
 	Register(username, password, name string) (*model.User, error)
 	Login(username, password string) (string, *model.User, error)
+	GetJWTSecret() string // <- burayı ekle
 }
 
 type userService struct {
@@ -60,9 +60,10 @@ func (s *userService) Login(username, password string) (string, *model.User, err
 	}
 
 	claims := jwt.MapClaims{
+		"id":       user.ID,
+		"name":     user.Name,
 		"username": user.Username,
-		"exp": time.Now().Add(30 * 24 * time.Hour).Unix(),
-
+		"exp":      time.Now().Add(30 * 24 * time.Hour).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -72,4 +73,7 @@ func (s *userService) Login(username, password string) (string, *model.User, err
 	}
 
 	return signedToken, user, nil
+}
+func (s *userService) GetJWTSecret() string {
+	return s.jwtSecret
 }
