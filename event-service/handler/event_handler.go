@@ -66,7 +66,7 @@ func (h *EventHandler) CheckUserMiddleware(c *fiber.Ctx) error {
 }
 
 func (h *EventHandler) CreateEvent(c *fiber.Ctx) error {
-	// Middleware'den kullanıcı ID'sini al
+	
 	userID, ok := c.Locals("userID").(int)
 	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Kullanıcı ID'si mevcut değil"})
@@ -77,7 +77,6 @@ func (h *EventHandler) CreateEvent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Geçersiz istek"})
 	}
 
-	// Kullanıcı ID'sini etkinliğe ekle
 	e.UserId = userID
 
 	createdEvent, err := h.Service.CreateEvent(e)
@@ -88,7 +87,7 @@ func (h *EventHandler) CreateEvent(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(createdEvent)
 }
 
-// GetEvents ve GetEventByID fonksiyonları aynı kalır.
+
 func (h *EventHandler) GetEvents(c *fiber.Ctx) error {
 	query := c.Query("isActive")
 	var isActive *bool

@@ -26,7 +26,7 @@ func (h *BookingHandler) CheckUserMiddleware(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Yetkilendirme token'ı eksik"})
 	}
 
-	// User Service'e token ile istek at
+
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/me", h.UserServiceURL), nil) // User Service adresi ve /me endpoint'i
 	if err != nil {
@@ -44,7 +44,6 @@ func (h *BookingHandler) CheckUserMiddleware(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Geçersiz yetkilendirme token'ı"})
 	}
 
-	// Yanıttan kullanıcı ID'sini al
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Kullanıcı bilgileri okunamadı"})
@@ -60,21 +59,20 @@ func (h *BookingHandler) CheckUserMiddleware(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Kullanıcı ID'si okunamadı"})
 	}
 
-	// Kullanıcı ID'sini Fiber context'ine kaydet
+
 	c.Locals("userID", int(userID))
 
 	return c.Next()
 }
 
 func (h *BookingHandler) CreateBooking(c *fiber.Ctx) error {
-	// Middleware'den kullanıcı ID'sini al
+	
 	userID, ok := c.Locals("userID").(int)
 	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Kullanıcı ID'si mevcut değil"})
 	}
 
 	var req struct {
-		// user_id artık istek gövdesinde beklenmiyor
 		EventID int `json:"event_id"`
 	}
 
@@ -93,16 +91,15 @@ func (h *BookingHandler) CreateBooking(c *fiber.Ctx) error {
 	})
 }
 
-// CancelBooking handler fonksiyonu güncellenmiştir.
 func (h *BookingHandler) CancelBooking(c *fiber.Ctx) error {
-	// Middleware'den kullanıcı ID'sini al
+
 	userID, ok := c.Locals("userID").(int)
 	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Kullanıcı ID'si mevcut değil"})
 	}
 
 	var req struct {
-		// user_id artık istek gövdesinde beklenmiyor
+		
 		EventID int `json:"event_id"`
 	}
 
