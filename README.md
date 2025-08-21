@@ -11,6 +11,9 @@ Bu sistem, üç ana mikroservisten oluşmaktadır:
 
  Bu servisler, HTTP üzerinden birbirleriyle haberleşir ve her biri kendi veritabanı veya önbellek kaynağını kullanabilir.
 
+
+ <img width="1354" height="721" alt="Ekran görüntüsü 2025-08-21 163654" src="https://github.com/user-attachments/assets/6874af93-4a7b-480c-9052-a35cea9cb79f" />
+
 ## GEREKSİNİMLER
  Projeyi yerel makinenizde çalıştırmak için aşağıdaki yazılımların kurulu olması gerekir:
 
@@ -83,3 +86,9 @@ Event Service (:8081)
 | :--- | :--- | :--- |
 | `/bookings` | `POST` | Yetkili bir kullanıcının bir etkinliğe kayıt olmasını sağlar. Bu işlem öncesinde kullanıcı ve etkinlik bilgileri doğrulanır, ayrıca etkinlik kontenjanı kontrol edilir. |
 | `/bookings` | `DELETE` | Yetkili bir kullanıcının daha önce yaptığı bir rezervasyonu iptal etmesini sağlar. |
+
+
+
+
+
+
