@@ -19,37 +19,45 @@ Bu sistem, üç ana mikroservisten oluşmaktadır:
 
 ## KURULUM
 
- 1. Projeyi klonlayın:
- > git clone "proje-repo-adresi"
+1. Projeyi klonlayın:
 
- > cd "proje-klasoru"
+```sh
+git clone <proje-repo-adresi>
+```
 
- 2. Veritabanı ve Redis konteynerlerini başlatın:
+```sh
+cd <proje-klasoru>
+```
+2. Veritabanı ve Redis konteynerlerini başlatın:
 
- > docker-compose up -d
+```sh
+ docker-compose up -d
+```
+ 3. Her bir mikroservisin bağımlılıklarını indirin:
 
- 3.Her bir mikroservisin bağımlılıklarını indirin:
+```sh
+cd user-service && go mod tidy && cd ..
 
-> cd user-service && go mod tidy && cd ..
+cd event-service && go mod tidy && cd ..
 
-> cd event-service && go mod tidy && cd ..
+cd booking-service && go mod tidy && cd ..
+```
+ 4. Her servisi ayrı ayrı çalıştırın:
 
-> cd booking-service && go mod tidy && cd ..
+```sh
+cd user-service
 
+go run main.go
 
- 4.Her servisi ayrı ayrı çalıştırın:
+cd event-service
 
-> cd user-service
+go run main.go
 
-> go run main.go
+cd booking-service
 
-> cd event-service
+go run main.go
 
-> go run main.go
-
-> cd booking-service
-
-> go run main.go
+```
 
 ## API DÖKÜMANTASYONU
 
