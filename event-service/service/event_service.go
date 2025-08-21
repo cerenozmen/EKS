@@ -55,13 +55,11 @@ func (s *EventService) GetEventByID(id int) (*model.Event, error) {
 			return &e, nil
 		}
 	}
-
 	// 2. DB'den oku
 	e, err := s.repo.GetEventByID(id)
 	if err != nil {
 		return nil, err
 	}
-
 	// 3. Redis'e kaydet (go routine)
 	go func() {
 		data, _ := json.Marshal(e)

@@ -74,7 +74,7 @@ func (s *BookingService) getEvent(eventID int) (*model.Event, error) {
 	fmt.Println("Event Service'den dönen JSON:", string(bodyBytes))
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Event Service hata döndürdü. Durum Kodu: %d, Mesaj: %s", resp.StatusCode, string(bodyBytes))
+		return nil, fmt.Errorf("event service hata döndürdü, durum kodu: %d, mesaj: %s", resp.StatusCode, string(bodyBytes))
 	}
 
 	var event model.Event

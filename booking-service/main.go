@@ -31,10 +31,10 @@ func main() {
 
 	bookingRepo := repository.NewBookingRepository(db)
 	bookingService := service.NewBookingService(bookingRepo, cfg.EventServiceURL)
-	bookingHandler := handler.NewBookingHandler(bookingService)
+	bookingHandler := handler.NewBookingHandler(bookingService,cfg.UserServiceURL)
 
-	app.Post("/bookings", bookingHandler.CreateBooking)
-	app.Delete("/bookings", bookingHandler.CancelBooking)
+	app.Post("/bookings", bookingHandler.CheckUserMiddleware, bookingHandler.CreateBooking)
+	app.Delete("/bookings", bookingHandler.CheckUserMiddleware, bookingHandler.CancelBooking)
 	fmt.Printf("Booking Service, Fiber ile %s portunda çalışıyor...\n", cfg.AppPort)
 	if err := app.Listen(":" + cfg.AppPort); err != nil {
 		panic(err)

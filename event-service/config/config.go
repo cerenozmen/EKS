@@ -10,6 +10,7 @@ import (
 type Cfg struct {
 	AppPort          string `env:"APP_PORT" default:"8081"`
 	RedisURL         string `env:"REDIS_URL"`
+	UserServiceURL  string `env:"USER_SERVICE_URL"`
 	DatabaseHost     string `env:"DATABASE_HOST"`
 	DatabasePort     string `env:"DATABASE_PORT"`
 	DatabaseUser     string `env:"DATABASE_USER"`
